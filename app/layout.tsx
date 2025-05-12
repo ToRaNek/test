@@ -17,32 +17,32 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const session = await getServerSession(authOptions);
 
   return (
-      <html lang="fr" suppressHydrationWarning>
-      <body className="bg-primary text-white min-h-screen">
-      <SessionProvider session={session}>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-          <nav className="flex justify-between items-center p-4 border-b border-gray-800">
-            <Link href="/" className="text-xl font-bold flex items-center">
-              <span className="mr-2">🎵</span> Devine la Zik
-            </Link>
-            <div className="flex items-center gap-4">
-              {session?.user && (
+    <html lang="fr" suppressHydrationWarning>
+      <body className="min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white">
+        <SessionProvider session={session}>
+          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+            <nav className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-800">
+              <Link href="/" className="text-xl font-bold flex items-center">
+                <span className="mr-2">🎵</span> Devine la Zik
+              </Link>
+              <div className="flex items-center gap-4">
+                {session?.user && (
                   <>
-                    <Link href="/profile" className="hover:text-accent transition-colors">
+                    <Link href="/profile" className="hover:text-blue-500 dark:hover:text-blue-400 transition-colors">
                       Profil
                     </Link>
-                    <Link href="/lobby" className="hover:text-accent transition-colors">
+                    <Link href="/lobby" className="hover:text-blue-500 dark:hover:text-blue-400 transition-colors">
                       Lobby
                     </Link>
                   </>
-              )}
-              <ThemeToggle />
-            </div>
-          </nav>
-          <main className="max-w-3xl mx-auto p-4">{children}</main>
-        </ThemeProvider>
-      </SessionProvider>
+                )}
+                <ThemeToggle />
+              </div>
+            </nav>
+            <main className="max-w-3xl mx-auto p-4">{children}</main>
+          </ThemeProvider>
+        </SessionProvider>
       </body>
-      </html>
+    </html>
   );
 }

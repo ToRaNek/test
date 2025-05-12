@@ -74,7 +74,7 @@ export default function Results() {
       )}
 
       <div className="flex gap-4 mt-5">
-        <Link href="/lobby" className="bg-accent px-4 py-2 rounded text-white">
+        <Link href="/public/lobby" className="bg-accent px-4 py-2 rounded text-white">
           Retour lobby
         </Link>
         <Link href={`/game/${gameId}`} className="bg-accent px-4 py-2 rounded text-white">

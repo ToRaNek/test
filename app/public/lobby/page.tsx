@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Room } from '../../types';
 
 export default function Lobby() {
@@ -74,6 +75,14 @@ export default function Lobby() {
         <div>
           <h1 className="text-3xl font-bold mb-2">Lobby</h1>
           <p className="text-gray-400">Créez ou rejoignez une partie de Devine la Zik</p>
+          <div className="flex gap-4 mt-4">
+            <Link href="/public/lobby" className="bg-accent px-4 py-2 rounded text-white">
+              Retour lobby
+            </Link>
+            <Link href="/public/profile" className="bg-accent px-4 py-2 rounded text-white">
+              Profil
+            </Link>
+          </div>
         </div>
 
         <div className="p-6 bg-secondary rounded-lg shadow-sm">
