@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  const { gameId, userAnswer } = await req.json();
+  const { gameId, _userAnswer } = await req.json();
   const game = await prisma.game.findUnique({ where: { id: gameId } });
   if (!game) return NextResponse.json({ error: 'Game not found' }, { status: 404 });
   // Ici, on mock le process: marquer score/avancement/sauver réponse

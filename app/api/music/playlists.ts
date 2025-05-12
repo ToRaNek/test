@@ -1,5 +1,5 @@
 // app/api/music/playlists.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 import { getSpotifyAccessToken } from '../../../utils/spotify'; // à implémenter util

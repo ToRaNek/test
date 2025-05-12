@@ -5,7 +5,7 @@ import { prisma } from '../../../utils/prisma';
 import { authOptions } from '../auth/[...nextauth]';
 
 // Stub out la génération de questions à partir des Spotify pools des joueurs
-async function generateQuestionsForRoom(roomID: string) {
+async function generateQuestionsForRoom(_roomID: string) {
   // Dans un vrai système, on combinerait tous les prefs musique,
   // puis fetcherait les tracks via les tokens refreshés players,
   // ici on mock des questions (à remplacer par requêtes Spotify réelles).
