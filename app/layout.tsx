@@ -18,28 +18,35 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="fr" suppressHydrationWarning>
-      <body className="min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white">
+      <body className="min-h-screen bg-gray-950 text-white font-sans">
         <SessionProvider session={session}>
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-            <nav className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-800">
-              <Link href="/" className="text-xl font-bold flex items-center">
-                <span className="mr-2">🎵</span> Devine la Zik
-              </Link>
-              <div className="flex items-center gap-4">
-                {session?.user && (
-                  <>
-                    <Link href="/profile" className="hover:text-blue-500 dark:hover:text-blue-400 transition-colors">
-                      Profil
-                    </Link>
-                    <Link href="/lobby" className="hover:text-blue-500 dark:hover:text-blue-400 transition-colors">
-                      Lobby
-                    </Link>
-                  </>
-                )}
-                <ThemeToggle />
+            <header className="w-full p-6 bg-gray-900 shadow-lg border-b border-gray-800">
+              <div className="max-w-6xl mx-auto flex justify-between items-center">
+                <Link href="/" className="text-2xl font-bold flex items-center text-blue-400 hover:text-blue-300 transition-colors">
+                  <span className="mr-2">🎵</span> Devine la Zik
+                </Link>
+                <nav className="flex items-center gap-6">
+                  {session?.user && (
+                    <>
+                      <Link href="/profile" className="hover:text-blue-400 transition-colors font-medium">
+                        Profil
+                      </Link>
+                      <Link href="/lobby" className="hover:text-blue-400 transition-colors font-medium">
+                        Lobby
+                      </Link>
+                    </>
+                  )}
+                  <ThemeToggle />
+                </nav>
               </div>
-            </nav>
-            <main className="max-w-3xl mx-auto p-4">{children}</main>
+            </header>
+            <main className="flex-1 w-full max-w-4xl mx-auto p-8 mt-6 bg-gray-900 rounded-lg shadow-xl">
+              {children}
+            </main>
+            <footer className="mt-12 py-6 text-center text-gray-500 text-sm">
+              <p>© {new Date().getFullYear()} Devine la Zik - Tous droits réservés</p>
+            </footer>
           </ThemeProvider>
         </SessionProvider>
       </body>
