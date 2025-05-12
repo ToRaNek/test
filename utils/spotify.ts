@@ -1,6 +1,6 @@
 // utils/spotify.ts
-import { prisma } from "./prisma";
-import { env } from "./env";
+import { prisma } from './prisma';
+import { env } from './env';
 
 /**
  * Récupère ou rafraîchit le token d'accès Spotify pour un utilisateur
@@ -11,7 +11,7 @@ export async function getSpotifyAccessToken(userId: string): Promise<string | nu
   const account = await prisma.account.findFirst({
     where: {
       userId,
-      provider: "spotify",
+      provider: 'spotify',
     },
   });
 
@@ -24,11 +24,11 @@ export async function getSpotifyAccessToken(userId: string): Promise<string | nu
   }
 
   // Sinon, on rafraîchit le token
-  const response = await fetch("https://accounts.spotify.com/api/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  const response = await fetch('https://accounts.spotify.com/api/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
-      grant_type: "refresh_token",
+      grant_type: 'refresh_token',
       refresh_token: account.refreshToken,
       client_id: env.SPOTIFY_CLIENT_ID,
       client_secret: env.SPOTIFY_CLIENT_SECRET,

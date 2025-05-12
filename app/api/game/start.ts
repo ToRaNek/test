@@ -1,18 +1,19 @@
+// app/api/game/start.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "../../../utils/prisma";
 import { authOptions } from "../auth/[...nextauth]";
 
 // Stub out la génération de questions à partir des Spotify pools des joueurs
-async function generateQuestionsForRoom(roomId: string) {
+async function generateQuestionsForRoom(roomID: string) {
   // Dans un vrai système, on combinerait tous les prefs musique,
   // puis fetcherait les tracks via les tokens refreshés players,
   // ici on mock des questions (à remplacer par requêtes Spotify réelles).
-  // Réduit à une question demo :
+  // Réduit à une question demo :
   return [
     {
       type: "audio",
-      question: "Quel est ce morceau ?",
+      question: "Quel est ce morceau ?",
       previewUrl: "https://p.scdn.co/mp3-preview/demo.mp3",
       correct: "Some track",
       choices: ["Some track", "Track 2", "Track 3", "Track 4"]

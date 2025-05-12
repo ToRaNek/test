@@ -1,3 +1,4 @@
+// app/api/game/answer.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "../../../utils/prisma";
@@ -8,7 +9,7 @@ export async function POST(req: NextRequest) {
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const { gameId, answer } = await req.json();
+  const { gameId, userAnswer } = await req.json();
   const game = await prisma.game.findUnique({ where: { id: gameId } });
   if (!game) return NextResponse.json({ error: "Game not found" }, { status: 404 });
   // Ici, on mock le process: marquer score/avancement/sauver réponse

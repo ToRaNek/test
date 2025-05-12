@@ -25,8 +25,8 @@ export function useLobby(): UseLobbyReturn {
           throw new Error(`Erreur HTTP: ${response.status}`);
         }
 
-        const data = await response.json();
-        setRooms(data);
+        const roomsData = await response.json();
+        setRooms(roomsData);
         setError(null);
       } catch (error) {
         console.error("Erreur lors du chargement des rooms:", error);
@@ -74,7 +74,6 @@ export function useLobby(): UseLobbyReturn {
         throw new Error(`Erreur HTTP: ${response.status}`);
       }
 
-      const data = await response.json();
       return { joined: true };
     } catch (error) {
       console.error("Erreur lors de la tentative de rejoindre la room:", error);

@@ -26,7 +26,7 @@ export function Room({ roomCode, players, onReady, onStart }: RoomProps) {
                 </ul>
 
                 {players.length === 0 && (
-                    <p className="text-gray-400 italic">Aucun joueur n'a encore rejoint...</p>
+                    <p className="text-gray-400 italic">Aucun joueur n&apos;a encore rejoint...</p>
                 )}
             </div>
 

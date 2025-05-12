@@ -1,3 +1,4 @@
+// app/api/music/preferences.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "../../../utils/prisma";
@@ -10,7 +11,7 @@ const MusicPrefsSchema = z.object({
   useHistory: z.boolean(),
 });
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

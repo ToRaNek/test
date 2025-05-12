@@ -1,6 +1,6 @@
 // app/hooks/useRoom.ts
-import { useState, useEffect } from "react";
-import { Player } from "../types";
+import { useState, useEffect } from 'react';
+import { Player } from '../types';
 
 interface UseRoomReturn {
   players: Player[];
@@ -26,8 +26,8 @@ export function useRoom(roomCode: string): UseRoomReturn {
         setPlayers(data.players || []);
         setError(null);
       } catch (error) {
-        console.error("Erreur lors du chargement de la room:", error);
-        setError("Impossible de charger les données de la room");
+        console.error('Erreur lors du chargement de la room:', error);
+        setError('Impossible de charger les données de la room');
       } finally {
         setIsLoading(false);
       }
@@ -44,7 +44,7 @@ export function useRoom(roomCode: string): UseRoomReturn {
     try {
       setIsLoading(true);
       const response = await fetch(`/api/room/${roomCode}/ready`, {
-        method: "POST",
+        method: 'POST',
       });
 
       if (!response.ok) {
@@ -64,9 +64,9 @@ export function useRoom(roomCode: string): UseRoomReturn {
   const start = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("/api/game/start", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch('/api/game/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ roomId: roomCode }),
       });
 
@@ -77,9 +77,9 @@ export function useRoom(roomCode: string): UseRoomReturn {
       const data = await response.json();
       return { gameId: data.gameId };
     } catch (error) {
-      console.error("Erreur lors du lancement de la partie:", error);
-      setError("Erreur lors du lancement de la partie");
-      return { error: "Échec du lancement de la partie" };
+      console.error('Erreur lors du lancement de la partie:', error);
+      setError('Erreur lors du lancement de la partie');
+      return { error: 'Échec du lancement de la partie' };
     } finally {
       setIsLoading(false);
     }

@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { prisma } from "../../../utils/prisma";
-import { authOptions } from "../auth/[...nextauth]";
-import { z } from "zod";
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { prisma } from '../../../utils/prisma';
+import { authOptions } from '../auth/[...nextauth]';
+import { z } from 'zod';
 
 const CreateRoomSchema = z.object({
   rounds: z.number().min(1).max(20),
@@ -10,17 +10,24 @@ const CreateRoomSchema = z.object({
 });
 
 function genRoomCode(length = 6): string {
-  return Array.from({ length }, () => "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[Math.floor(Math.random() * 32)]).join("");
+  return Array.from(
+    { length },
+    () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 32)],
+  ).join('');
 }
 
 export async function GET() {
   // Liste des rooms ouvertes
   const rooms = await prisma.room.findMany({
-    where: { status: "open" },
+    where: { status: 'open' },
     select: {
-      id: true, code: true, status: true, createdAt: true, hostId: true,
-      players: { select: { userId: true } }
-    }
+      id: true,
+      code: true,
+      status: true,
+      createdAt: true,
+      hostId: true,
+      players: { select: { userId: true } },
+    },
   });
   return NextResponse.json(rooms);
 }
@@ -41,8 +48,8 @@ export async function POST(req: NextRequest) {
     data: {
       code,
       hostId: session.user.id,
-      status: "open"
-    }
+      status: 'open',
+    },
   });
   await prisma.player.create({
     data: {
@@ -50,8 +57,8 @@ export async function POST(req: NextRequest) {
       roomId: room.id,
       score: 0,
       ready: false,
-      ranking: null
-    }
+      ranking: null,
+    },
   });
   return NextResponse.json({ ...room, rounds, roundDuration });
 }

@@ -1,3 +1,4 @@
+// app/public/game/[gameId]/page.tsx
 "use client";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -70,7 +71,7 @@ export default function Game() {
 
   // Si l'état n'est pas disponible
   if (!state) {
-    return <div>Impossible de charger l'état du jeu. {msg}</div>;
+    return <div>Impossible de charger l&apos;état du jeu. {msg}</div>;
   }
 
   // Questions et question actuelle

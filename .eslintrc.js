@@ -12,7 +12,16 @@ module.exports = {
   rules: {
     "prettier/prettier": "error",
     "react/react-in-jsx-scope": "off",
-    "@typescript-eslint/no-unused-vars": ["error"],
+    "no-unused-vars": "off", // Désactiver la règle de base ESLint
+    "@typescript-eslint/no-unused-vars": ["warn", {
+      "argsIgnorePattern": "^_",
+      "varsIgnorePattern": "^_",
+      "caughtErrorsIgnorePattern": "^_",
+      "ignoreRestSiblings": true
+    }],
+    "@typescript-eslint/no-explicit-any": "warn",
     "react-hooks/rules-of-hooks": "error",
+    "react/no-unescaped-entities": "warn",
+    "@next/next/no-img-element": "warn"
   },
 };

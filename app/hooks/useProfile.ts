@@ -1,6 +1,6 @@
-"use client";
-import { useState, useEffect } from "react";
-import { User } from "../types";
+'use client';
+import { useState, useEffect } from 'react';
+import { User } from '../types';
 
 interface ProfileUpdate {
   pseudo: string;
@@ -24,7 +24,7 @@ export function useProfile(): UseProfileReturn {
     const fetchProfile = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch("/api/profile");
+        const response = await fetch('/api/profile');
 
         if (!response.ok) {
           throw new Error(`Erreur HTTP: ${response.status}`);
@@ -34,8 +34,8 @@ export function useProfile(): UseProfileReturn {
         setProfile(data);
         setError(null);
       } catch (error) {
-        console.error("Erreur lors du chargement du profil:", error);
-        setError("Impossible de charger le profil.");
+        console.error('Erreur lors du chargement du profil:', error);
+        setError('Impossible de charger le profil.');
       } finally {
         setIsLoading(false);
       }
@@ -48,25 +48,25 @@ export function useProfile(): UseProfileReturn {
   const update = async (data: ProfileUpdate): Promise<User | { error: string }> => {
     try {
       setIsLoading(true);
-      const response = await fetch("/api/profile", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+      const response = await fetch('/api/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
       });
 
       const result = await response.json();
 
       if (response.ok) {
         // Mettre à jour le state local avec les nouvelles données
-        setProfile(prevProfile => ({ ...prevProfile, ...data } as User));
+        setProfile((prevProfile) => ({ ...prevProfile, ...data }) as User);
         setError(null);
         return result;
       } else {
-        setError(result.error || "Erreur lors de la mise à jour du profil");
-        return { error: result.error || "Erreur lors de la mise à jour du profil" };
+        setError(result.error || 'Erreur lors de la mise à jour du profil');
+        return { error: result.error || 'Erreur lors de la mise à jour du profil' };
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Erreur inconnue";
+      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
       setError(errorMessage);
       return { error: errorMessage };
     } finally {

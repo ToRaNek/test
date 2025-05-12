@@ -1,5 +1,5 @@
-"use client";
-import { useState, useEffect } from "react";
+'use client';
+import { useState, useEffect } from 'react';
 
 interface SpotifyAuthResponse {
   authUrl?: string;
@@ -15,14 +15,14 @@ export function useSpotifyAuth() {
   useEffect(() => {
     const checkSpotifyLink = async () => {
       try {
-        const response = await fetch("/api/spotify/link", { method: "POST" });
+        const response = await fetch('/api/spotify/link', { method: 'POST' });
         const data: SpotifyAuthResponse = await response.json();
 
         // Si nous avons un 'state', cela signifie qu'un compte est lié
         // Dans un vrai système, on aurait un endpoint spécifique pour vérifier
         setSpotifyLinked(!!data.state);
       } catch (error) {
-        console.error("Erreur lors de la vérification du lien Spotify:", error);
+        console.error('Erreur lors de la vérification du lien Spotify:', error);
       } finally {
         setIsLoading(false);
       }
@@ -35,7 +35,7 @@ export function useSpotifyAuth() {
   const link = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("/api/spotify/link", { method: "POST" });
+      const response = await fetch('/api/spotify/link', { method: 'POST' });
       const data: SpotifyAuthResponse = await response.json();
 
       if (data.authUrl) {
@@ -44,7 +44,7 @@ export function useSpotifyAuth() {
         console.error("Erreur: URL d'authentification manquante");
       }
     } catch (error) {
-      console.error("Erreur lors de la liaison Spotify:", error);
+      console.error('Erreur lors de la liaison Spotify:', error);
     } finally {
       setIsLoading(false);
     }
@@ -54,10 +54,10 @@ export function useSpotifyAuth() {
   const unlink = async () => {
     try {
       setIsLoading(true);
-      await fetch("/api/spotify/unlink", { method: "POST" });
+      await fetch('/api/spotify/unlink', { method: 'POST' });
       setSpotifyLinked(false);
     } catch (error) {
-      console.error("Erreur lors de la déliaison Spotify:", error);
+      console.error('Erreur lors de la déliaison Spotify:', error);
     } finally {
       setIsLoading(false);
     }
@@ -67,6 +67,6 @@ export function useSpotifyAuth() {
     spotifyLinked,
     link,
     unlink,
-    isLoading
+    isLoading,
   };
 }

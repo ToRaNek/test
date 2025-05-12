@@ -1,3 +1,4 @@
+// app/api/profile.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "../../utils/prisma";
@@ -9,7 +10,7 @@ const ProfileSchema = z.object({
   image: z.string().url().optional(),
 });
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -46,8 +47,8 @@ export async function POST(req: NextRequest) {
       select: { id: true, pseudo: true, image: true },
     });
     return NextResponse.json(user);
-  } catch (e: any) {
-    if (e.code === "P2002") {
+  } catch (e: unknown) {
+    if (e instanceof Error && 'code' in e && e.code === "P2002") {
       return NextResponse.json({ error: "Pseudo already taken" }, { status: 409 });
     }
     return NextResponse.json({ error: "Error" }, { status: 500 });

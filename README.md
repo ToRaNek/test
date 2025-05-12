@@ -45,7 +45,7 @@ SPOTIFY_REDIRECT_URI=http://localhost:3000/api/spotify/callback
 pnpm prisma:migrate
 ```
 
-*(Pour peupler la base en démo :)*
+_(Pour peupler la base en démo :)_
 
 ```bash
 pnpm prisma:seed

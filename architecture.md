@@ -72,6 +72,7 @@
 ```
 
 **Principes structurants :**
+
 - `app/` (Next.js AppDir) : pages, routing, API.
 - `prisma/` : ORM schema & seed.
 - `components/` : React components réutilisables.

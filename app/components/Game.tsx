@@ -12,12 +12,11 @@ interface GameQuestion {
 interface GameProps {
     question: GameQuestion;
     choices: string[];
-    answer: string | null;
     onAnswer: (choice: string) => void;
     scores: Record<string, number>;
 }
 
-export function Game({ question, choices, answer, onAnswer, scores }: GameProps) {
+export function Game({ question, choices, onAnswer, scores }: GameProps) {
     return (
         <div>
             <h2>{question.question}</h2>

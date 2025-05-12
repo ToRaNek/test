@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+// app/api/spotify/unlink.ts
+import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "../../../utils/prisma";
 import { authOptions } from "../auth/[...nextauth]";
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

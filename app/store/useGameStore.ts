@@ -1,5 +1,5 @@
 // app/store/useGameStore.ts
-import { create } from "zustand";
+import { create } from 'zustand';
 
 interface GameState {
   state: GameStateType | null;
@@ -10,7 +10,7 @@ interface GameStateType {
   id: string;
   roomId: string;
   questions: QuestionType[];
-  state: "waiting" | "running" | "finished";
+  state: 'waiting' | 'running' | 'finished';
   scores: Record<string, number>;
   currentQuestionIndex: number;
   createdAt: string;
@@ -18,7 +18,7 @@ interface GameStateType {
 }
 
 interface QuestionType {
-  type: "audio" | "image";
+  type: 'audio' | 'image';
   question: string;
   previewUrl?: string;
   correct: string;
