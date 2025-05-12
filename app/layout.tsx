@@ -16,18 +16,18 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const session = await getServerSession(authOptions);
 
   return (
-      <html lang="fr" suppressHydrationWarning>
+    <html lang="fr" suppressHydrationWarning>
       <body className="bg-primary text-white min-h-screen">
-      <SessionProvider session={session}>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-          <nav className="flex justify-between items-center p-4">
-            <span className="text-xl font-bold">Devine la Zik</span>
-            <ThemeToggle />
-          </nav>
-          <main className="max-w-3xl mx-auto p-4">{children}</main>
-        </ThemeProvider>
-      </SessionProvider>
+        <SessionProvider session={session}>
+          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+            <nav className="flex justify-between items-center p-4">
+              <span className="text-xl font-bold">Devine la Zik</span>
+              <ThemeToggle />
+            </nav>
+            <main className="max-w-3xl mx-auto p-4">{children}</main>
+          </ThemeProvider>
+        </SessionProvider>
       </body>
-      </html>
+    </html>
   );
 }

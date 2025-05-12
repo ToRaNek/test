@@ -1,6 +1,6 @@
 // app/hooks/useLobby.ts
-import { useState, useEffect } from "react";
-import { Room } from "../types";
+import { useState, useEffect } from 'react';
+import { Room } from '../types';
 
 interface UseLobbyReturn {
   rooms: Room[];
@@ -19,7 +19,7 @@ export function useLobby(): UseLobbyReturn {
     const fetchRooms = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch("/api/room");
+        const response = await fetch('/api/room');
 
         if (!response.ok) {
           throw new Error(`Erreur HTTP: ${response.status}`);
@@ -29,8 +29,8 @@ export function useLobby(): UseLobbyReturn {
         setRooms(roomsData);
         setError(null);
       } catch (error) {
-        console.error("Erreur lors du chargement des rooms:", error);
-        setError("Impossible de charger les rooms disponibles");
+        console.error('Erreur lors du chargement des rooms:', error);
+        setError('Impossible de charger les rooms disponibles');
       } finally {
         setIsLoading(false);
       }
@@ -42,9 +42,9 @@ export function useLobby(): UseLobbyReturn {
   const create = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("/api/room", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch('/api/room', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rounds: 5, roundDuration: 30 }),
       });
 
@@ -55,9 +55,9 @@ export function useLobby(): UseLobbyReturn {
       const data = await response.json();
       return { code: data.code };
     } catch (error) {
-      console.error("Erreur lors de la création de la room:", error);
-      setError("Erreur lors de la création de la room");
-      return { error: "Échec de la création" };
+      console.error('Erreur lors de la création de la room:', error);
+      setError('Erreur lors de la création de la room');
+      return { error: 'Échec de la création' };
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +67,7 @@ export function useLobby(): UseLobbyReturn {
     try {
       setIsLoading(true);
       const response = await fetch(`/api/room/${code}/join`, {
-        method: "POST",
+        method: 'POST',
       });
 
       if (!response.ok) {
@@ -76,9 +76,9 @@ export function useLobby(): UseLobbyReturn {
 
       return { joined: true };
     } catch (error) {
-      console.error("Erreur lors de la tentative de rejoindre la room:", error);
-      setError("Erreur lors de la tentative de rejoindre la room");
-      return { error: "Échec lors de la tentative de rejoindre" };
+      console.error('Erreur lors de la tentative de rejoindre la room:', error);
+      setError('Erreur lors de la tentative de rejoindre la room');
+      return { error: 'Échec lors de la tentative de rejoindre' };
     } finally {
       setIsLoading(false);
     }

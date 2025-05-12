@@ -16,8 +16,8 @@ async function generateQuestionsForRoom(roomID: string) {
       question: 'Quel est ce morceau ?',
       previewUrl: 'https://p.scdn.co/mp3-preview/demo.mp3',
       correct: 'Some track',
-      choices: ['Some track', 'Track 2', 'Track 3', 'Track 4']
-    }
+      choices: ['Some track', 'Track 2', 'Track 3', 'Track 4'],
+    },
   ];
 }
 
@@ -38,8 +38,8 @@ export async function POST(req: NextRequest) {
       state: 'running',
       questions,
       scores: {},
-      currentQuestionIndex: 0
-    }
+      currentQuestionIndex: 0,
+    },
   });
   await prisma.room.update({ where: { id: roomId }, data: { status: 'playing' } });
   return NextResponse.json({ ok: true, gameId: game.id });

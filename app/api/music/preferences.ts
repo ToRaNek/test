@@ -1,9 +1,9 @@
 // app/api/music/preferences.ts
-import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { prisma } from "../../../utils/prisma";
-import { authOptions } from "../auth/[...nextauth]";
-import { z } from "zod";
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { prisma } from '../../../utils/prisma';
+import { authOptions } from '../auth/[...nextauth]';
+import { z } from 'zod';
 
 const MusicPrefsSchema = z.object({
   selectedPlaylistIds: z.array(z.string().min(1)).min(1),
@@ -14,7 +14,7 @@ const MusicPrefsSchema = z.object({
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const result = await prisma.musicPreference.findUnique({
     where: { userId: session.user.id },
@@ -25,7 +25,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const data = await req.json();
   const safe = MusicPrefsSchema.safeParse(data);

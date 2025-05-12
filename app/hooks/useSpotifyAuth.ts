@@ -46,7 +46,7 @@ export function useSpotifyAuth() {
   // Fonction pour lier un compte Spotify
   const link = async () => {
     try {
-      setState(prev => ({ ...prev, isLoading: true, error: null }));
+      setState((prev) => ({ ...prev, isLoading: true, error: null }));
       const response = await fetch('/api/spotify/link', { method: 'POST' });
 
       if (!response.ok) {
@@ -62,7 +62,7 @@ export function useSpotifyAuth() {
       }
     } catch (error) {
       console.error('Erreur lors de la liaison Spotify:', error);
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         isLoading: false,
         error: error instanceof Error ? error.message : 'Erreur inconnue',
@@ -73,7 +73,7 @@ export function useSpotifyAuth() {
   // Fonction pour délier un compte Spotify
   const unlink = async () => {
     try {
-      setState(prev => ({ ...prev, isLoading: true, error: null }));
+      setState((prev) => ({ ...prev, isLoading: true, error: null }));
       const response = await fetch('/api/spotify/unlink', { method: 'POST' });
 
       if (!response.ok) {
@@ -87,7 +87,7 @@ export function useSpotifyAuth() {
       });
     } catch (error) {
       console.error('Erreur lors de la déliaison Spotify:', error);
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         isLoading: false,
         error: error instanceof Error ? error.message : 'Erreur inconnue',

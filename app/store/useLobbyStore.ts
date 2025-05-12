@@ -1,6 +1,6 @@
 // app/store/useLobbyStore.ts
-import { create } from "zustand";
-import { Room } from "../types";
+import { create } from 'zustand';
+import { Room } from '../types';
 
 type LobbyState = {
   rooms: Room[];

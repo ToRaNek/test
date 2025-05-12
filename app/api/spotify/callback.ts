@@ -1,37 +1,37 @@
 // app/api/spotify/callback.ts
-import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { prisma } from "../../../utils/prisma";
-import { authOptions } from "../auth/[...nextauth]";
-import { env } from "../../../utils/env";
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { prisma } from '../../../utils/prisma';
+import { authOptions } from '../auth/[...nextauth]';
+import { env } from '../../../utils/env';
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
-    return NextResponse.redirect(new URL("/login?error=NotAuthenticated", req.url));
+    return NextResponse.redirect(new URL('/login?error=NotAuthenticated', req.url));
   }
 
   const { searchParams } = new URL(req.url);
-  const code = searchParams.get("code");
-  const error = searchParams.get("error");
+  const code = searchParams.get('code');
+  const error = searchParams.get('error');
 
   // Erreur OAuth ou annulation par l'utilisateur
   if (error || !code) {
-    return NextResponse.redirect(new URL("/profile?error=SpotifyAuthFailed", req.url));
+    return NextResponse.redirect(new URL('/profile?error=SpotifyAuthFailed', req.url));
   }
 
   try {
     // Échange du code contre un token
-    const tokenResponse = await fetch("https://accounts.spotify.com/api/token", {
-      method: "POST",
+    const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+        'Content-Type': 'application/x-www-form-urlencoded',
         Authorization: `Basic ${Buffer.from(
-            `${env.SPOTIFY_CLIENT_ID}:${env.SPOTIFY_CLIENT_SECRET}`
-        ).toString("base64")}`,
+          `${env.SPOTIFY_CLIENT_ID}:${env.SPOTIFY_CLIENT_SECRET}`,
+        ).toString('base64')}`,
       },
       body: new URLSearchParams({
-        grant_type: "authorization_code",
+        grant_type: 'authorization_code',
         code,
         redirect_uri: env.SPOTIFY_REDIRECT_URI,
       }),
@@ -44,21 +44,21 @@ export async function GET(req: NextRequest) {
     }
 
     // Récupération des infos du profil Spotify pour l'identifiant unique
-    const profileResponse = await fetch("https://api.spotify.com/v1/me", {
+    const profileResponse = await fetch('https://api.spotify.com/v1/me', {
       headers: { Authorization: `Bearer ${tokenData.access_token}` },
     });
 
     const profileData = await profileResponse.json();
 
     if (!profileData.id) {
-      throw new Error("Impossible de récupérer le profil Spotify");
+      throw new Error('Impossible de récupérer le profil Spotify');
     }
 
     // Stockage du compte Spotify dans notre DB
     await prisma.account.upsert({
       where: {
         provider_providerAccountId: {
-          provider: "spotify",
+          provider: 'spotify',
           providerAccountId: profileData.id,
         },
       },
@@ -72,8 +72,8 @@ export async function GET(req: NextRequest) {
       },
       create: {
         userId: session.user.id,
-        type: "oauth",
-        provider: "spotify",
+        type: 'oauth',
+        provider: 'spotify',
         providerAccountId: profileData.id,
         accessToken: tokenData.access_token,
         refreshToken: tokenData.refresh_token,
@@ -84,9 +84,9 @@ export async function GET(req: NextRequest) {
     });
 
     // Redirection vers la page profil avec succès
-    return NextResponse.redirect(new URL("/profile?spotify=linked", req.url));
+    return NextResponse.redirect(new URL('/profile?spotify=linked', req.url));
   } catch (error) {
-    console.error("Erreur lors de la liaison Spotify:", error);
-    return NextResponse.redirect(new URL("/profile?error=SpotifyLinkingFailed", req.url));
+    console.error('Erreur lors de la liaison Spotify:', error);
+    return NextResponse.redirect(new URL('/profile?error=SpotifyLinkingFailed', req.url));
   }
 }

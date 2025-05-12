@@ -42,10 +42,7 @@ export const authOptions: NextAuthOptions = {
     },
     async signIn({ account }) {
       // Interdire signup direct, uniquement via Google/Discord
-      if (
-          account?.provider !== 'google' &&
-          account?.provider !== 'discord'
-      ) {
+      if (account?.provider !== 'google' && account?.provider !== 'discord') {
         return false;
       }
       return true;
