@@ -1,0 +1,102 @@
+// Prisma Schema for Devine la Zik - PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String    @id @default(cuid())
+  name           String?
+  email          String?   @unique
+  image          String?
+  pseudo         String?   @unique
+  accounts       Account[]
+  players        Player[]
+  musicPrefs     MusicPreference?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  // Soft-delete and GDPR compliance
+  deletedAt      DateTime? 
+
+  @@map("users")
+}
+
+model Account {
+  id                String   @id @default(cuid())
+  userId            String
+  type              String
+  provider          String   // google, discord, spotify
+  providerAccountId String
+  accessToken       String?
+  refreshToken      String?
+  expiresAt         Int?
+  scope             String?
+  tokenType         String?
+  createdAt         DateTime @default(now())
+
+  user              User     @relation(fields: [userId], references: [id])
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Room {
+  id         String    @id @default(cuid())
+  code       String    @unique
+  hostId     String
+  status     String    // open, playing, ended
+  createdAt  DateTime  @default(now())
+
+  players    Player[]
+  game       Game?
+
+  @@map("rooms")
+}
+
+model Player {
+  id        String   @id @default(cuid())
+  userId    String
+  roomId    String
+  score     Int      @default(0)
+  ready     Boolean  @default(false)
+  ranking   Int?
+  joinedAt  DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+  room      Room     @relation(fields: [roomId], references: [id])
+
+  @@unique([userId, roomId])
+  @@map("players")
+}
+
+model MusicPreference {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  selectedPlaylistIds String   // CSV or JSON stringified array of playlist ids
+  useLikedTracks      Boolean  @default(true)
+  useHistory          Boolean  @default(false)
+
+  user                User     @relation(fields: [userId], references: [id])
+
+  @@map("music_preferences")
+}
+
+model Game {
+  id                   String   @id @default(cuid())
+  roomId               String   @unique
+  questions            Json
+  state                String  // waiting, running, finished
+  scores               Json
+  currentQuestionIndex Int     @default(0)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  room                 Room     @relation(fields: [roomId], references: [id])
+
+  @@map("games")
+}
