@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         Authorization: `Basic ${Buffer.from(
-          `${env.SPOTIFY_CLIENT_ID}:${env.SPOTIFY_CLIENT_SECRET}`,
+            `${env.SPOTIFY_CLIENT_ID}:${env.SPOTIFY_CLIENT_SECRET}`,
         ).toString('base64')}`,
       },
       body: new URLSearchParams({
@@ -64,22 +64,22 @@ export async function GET(req: NextRequest) {
       },
       update: {
         userId: session.user.id,
-        accessToken: tokenData.access_token,
-        refreshToken: tokenData.refresh_token,
-        expiresAt: Math.floor(Date.now() / 1000) + (tokenData.expires_in || 3600),
+        access_token: tokenData.access_token,
+        refresh_token: tokenData.refresh_token,
+        expires_at: Math.floor(Date.now() / 1000) + (tokenData.expires_in || 3600),
         scope: tokenData.scope,
-        tokenType: tokenData.token_type,
+        token_type: tokenData.token_type,
       },
       create: {
         userId: session.user.id,
         type: 'oauth',
         provider: 'spotify',
         providerAccountId: profileData.id,
-        accessToken: tokenData.access_token,
-        refreshToken: tokenData.refresh_token,
-        expiresAt: Math.floor(Date.now() / 1000) + (tokenData.expires_in || 3600),
+        access_token: tokenData.access_token,
+        refresh_token: tokenData.refresh_token,
+        expires_at: Math.floor(Date.now() / 1000) + (tokenData.expires_in || 3600),
         scope: tokenData.scope,
-        tokenType: tokenData.token_type,
+        token_type: tokenData.token_type,
       },
     });
 

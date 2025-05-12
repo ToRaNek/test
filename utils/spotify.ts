@@ -15,12 +15,12 @@ export async function getSpotifyAccessToken(userId: string): Promise<string | nu
     },
   });
 
-  if (!account?.refreshToken) return null;
+  if (!account?.refresh_token) return null;
 
   // Si le token est encore valide, on le retourne
   const now = Math.floor(Date.now() / 1000);
-  if (account.accessToken && account.expiresAt && account.expiresAt > now + 60) {
-    return account.accessToken;
+  if (account.access_token && account.expires_at && account.expires_at > now + 60) {
+    return account.access_token;
   }
 
   // Sinon, on rafraîchit le token
@@ -35,7 +35,7 @@ export async function getSpotifyAccessToken(userId: string): Promise<string | nu
       },
       body: new URLSearchParams({
         grant_type: 'refresh_token',
-        refresh_token: account.refreshToken,
+        refresh_token: account.refresh_token,
       }),
       cache: 'no-cache', // Important pour éviter les problèmes de mise en cache
     });
@@ -52,9 +52,9 @@ export async function getSpotifyAccessToken(userId: string): Promise<string | nu
     await prisma.account.update({
       where: { id: account.id },
       data: {
-        accessToken: data.access_token,
-        expiresAt: Math.floor(Date.now() / 1000) + (data.expires_in || 3600),
-        refreshToken: data.refresh_token ?? account.refreshToken, // Garder l'ancien refresh token si pas de nouveau
+        access_token: data.access_token,
+        expires_at: Math.floor(Date.now() / 1000) + (data.expires_in || 3600),
+        refresh_token: data.refresh_token ?? account.refresh_token, // Garder l'ancien refresh token si pas de nouveau
         scope: data.scope ?? account.scope,
       },
     });
