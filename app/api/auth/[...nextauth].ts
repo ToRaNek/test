@@ -1,10 +1,10 @@
 // app/api/auth/[...nextauth].ts
-import NextAuth, { NextAuthOptions } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
-import DiscordProvider from "next-auth/providers/discord";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { prisma } from "../../../utils/prisma";
-import { env } from "../../../utils/env";
+import NextAuth, { NextAuthOptions } from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
+import DiscordProvider from 'next-auth/providers/discord';
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import { prisma } from '../../../utils/prisma';
+import { env } from '../../../utils/env';
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -20,7 +20,7 @@ export const authOptions: NextAuthOptions = {
     // SpotifyProvider à NE PAS activer ici (liaison sur /profile)
   ],
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   callbacks: {
@@ -43,8 +43,8 @@ export const authOptions: NextAuthOptions = {
     async signIn({ account }) {
       // Interdire signup direct, uniquement via Google/Discord
       if (
-          account?.provider !== "google" &&
-          account?.provider !== "discord"
+          account?.provider !== 'google' &&
+          account?.provider !== 'discord'
       ) {
         return false;
       }
@@ -52,8 +52,8 @@ export const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: "/login",
-    error: "/login?error=OAuthError",
+    signIn: '/login',
+    error: '/login?error=OAuthError',
     // Pas de signUp page !
   },
   secret: env.NEXTAUTH_SECRET,
