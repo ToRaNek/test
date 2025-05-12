@@ -64,7 +64,7 @@
 /tailwind.config.js
 /tsconfig.json
 /prisma/.env
-/.eslintrc.js
+/.eslintrc.cjs
 /.prettierrc
 /jest.config.js
 /package.json

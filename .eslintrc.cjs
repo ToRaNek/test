@@ -1,4 +1,4 @@
-// /.eslintrc.js
+// /.eslintrc.cjs
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
@@ -27,4 +27,13 @@ module.exports = {
     'react/no-unescaped-entities': 'warn',
     '@next/next/no-img-element': 'warn',
   },
+  overrides: [
+    {
+      // Désactiver no-var-requires pour les fichiers de configuration
+      files: ['*.config.js', 'jest.config.js', 'next.config.js'],
+      rules: {
+        '@typescript-eslint/no-var-requires': 'off',
+      },
+    },
+  ],
 };
