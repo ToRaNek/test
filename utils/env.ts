@@ -3,12 +3,14 @@
  * Charge et valide les variables d'environnement requises
  */
 export const env = {
+  DATABASE_URL: required('DATABASE_URL'),
+  DIRECT_URL: required('DIRECT_URL'),
+  NEXTAUTH_URL: required('NEXTAUTH_URL'),
   NEXTAUTH_SECRET: required('NEXTAUTH_SECRET'),
   GOOGLE_CLIENT_ID: required('GOOGLE_CLIENT_ID'),
   GOOGLE_CLIENT_SECRET: required('GOOGLE_CLIENT_SECRET'),
   DISCORD_CLIENT_ID: required('DISCORD_CLIENT_ID'),
   DISCORD_CLIENT_SECRET: required('DISCORD_CLIENT_SECRET'),
-  DATABASE_URL: required('DATABASE_URL'),
   SPOTIFY_CLIENT_ID: required('SPOTIFY_CLIENT_ID'),
   SPOTIFY_CLIENT_SECRET: required('SPOTIFY_CLIENT_SECRET'),
   SPOTIFY_REDIRECT_URI: required('SPOTIFY_REDIRECT_URI'),

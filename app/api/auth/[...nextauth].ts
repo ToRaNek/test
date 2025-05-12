@@ -1,10 +1,11 @@
-// app/api/auth/[...nextauth].ts
+// app/api/auth/[...nextauth].ts - Mise à jour
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import DiscordProvider from 'next-auth/providers/discord';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { prisma } from '../../../utils/prisma';
 import { env } from '../../../utils/env';
+
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -17,15 +18,15 @@ export const authOptions: NextAuthOptions = {
       clientId: env.DISCORD_CLIENT_ID,
       clientSecret: env.DISCORD_CLIENT_SECRET,
     }),
-    // SpotifyProvider à NE PAS activer ici (liaison sur /profile)
   ],
+
   session: {
-    strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    strategy: 'database',
+    maxAge: 30 * 24 * 60 * 60, // 30 jours
   },
+  secret: env.NEXTAUTH_SECRET,  // Assurez-vous que cette ligne est présente
   callbacks: {
     async jwt({ token, user }) {
-      // Inclure l'ID utilisateur et le pseudo dans le token JWT
       if (user) {
         token.id = user.id;
         token.pseudo = user.pseudo || null;
@@ -33,7 +34,6 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      // Inclure l'ID utilisateur et le pseudo dans la session
       if (token) {
         session.user.id = token.id as string;
         session.user.pseudo = token.pseudo as string | null;
@@ -41,7 +41,6 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     async signIn({ account }) {
-      // Interdire signup direct, uniquement via Google/Discord
       if (account?.provider !== 'google' && account?.provider !== 'discord') {
         return false;
       }
@@ -51,9 +50,7 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: '/login',
     error: '/login?error=OAuthError',
-    // Pas de signUp page !
   },
-  secret: env.NEXTAUTH_SECRET,
 };
 
 export default NextAuth(authOptions);

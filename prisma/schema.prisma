@@ -1,4 +1,5 @@
-// Prisma Schema for Devine la Zik - PostgreSQL
+// prisma/schema.prisma
+// Schéma Prisma optimisé pour Devine la Zik
 
 generator client {
   provider = "prisma-client-js"
@@ -23,7 +24,7 @@ model User {
   musicPrefs     MusicPreference?
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
-  // Soft-delete and GDPR compliance
+  // Soft-delete et conformité RGPD
   deletedAt      DateTime?
 
   @@map("users")
@@ -75,6 +76,8 @@ model Room {
   hostId     String
   status     String    // open, playing, ended
   createdAt  DateTime  @default(now())
+  rounds     Int       @default(5)
+  roundDuration Int    @default(30)
 
   players    Player[]
   game       Game?
@@ -93,6 +96,7 @@ model Player {
 
   user      User     @relation(fields: [userId], references: [id])
   room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  answers   Answer[]
 
   @@unique([userId, roomId])
   @@map("players")
@@ -101,7 +105,7 @@ model Player {
 model MusicPreference {
   id                  String   @id @default(cuid())
   userId              String   @unique
-  selectedPlaylistIds String   // CSV or JSON stringified array of playlist ids
+  selectedPlaylistIds String   // CSV ou JSON stringifié d'IDs de playlists
   useLikedTracks      Boolean  @default(true)
   useHistory          Boolean  @default(false)
 
@@ -111,16 +115,57 @@ model MusicPreference {
 }
 
 model Game {
-  id                   String   @id @default(cuid())
-  roomId               String   @unique
-  questions            Json
-  state                String   // waiting, running, finished
-  scores               Json
-  currentQuestionIndex Int      @default(0)
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
+  id                   String    @id @default(cuid())
+  roomId               String    @unique
+  state                String    // waiting, running, finished
+  currentQuestionIndex Int       @default(0)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  startedAt            DateTime?
+  endedAt              DateTime?
 
-  room                 Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  room                 Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  questions            Question[]
+  answers              Answer[]
 
   @@map("games")
+}
+
+model Question {
+  id             String   @id @default(cuid())
+  gameId         String
+  type           String   // audio, image
+  question       String
+  previewUrl     String?
+  correctAnswer  String
+  choices        String[] // Tableau de choix possibles
+  trackId        String?  // ID Spotify de la piste
+  imageUrl       String?
+  order          Int      // Ordre de la question dans le jeu
+  points         Int      @default(10)
+  timeLimit      Int      @default(30) // Temps en secondes
+
+  game           Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  answers        Answer[]
+
+  @@map("questions")
+}
+
+model Answer {
+  id          String    @id @default(cuid())
+  gameId      String
+  questionId  String
+  playerId    String
+  answer      String
+  isCorrect   Boolean
+  points      Int       @default(0)
+  timeSpent   Int?      // Temps mis en secondes
+  submittedAt DateTime  @default(now())
+
+  game        Game      @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  question    Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  player      Player    @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@unique([questionId, playerId])
+  @@map("answers")
 }

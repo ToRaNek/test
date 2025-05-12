@@ -1,4 +1,4 @@
-// utils/spotify.ts
+// utils/spotify.ts - Mise à jour complète
 import { prisma } from './prisma';
 import { env } from './env';
 
@@ -30,7 +30,7 @@ export async function getSpotifyAccessToken(userId: string): Promise<string | nu
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         Authorization: `Basic ${Buffer.from(
-          `${env.SPOTIFY_CLIENT_ID}:${env.SPOTIFY_CLIENT_SECRET}`,
+            `${env.SPOTIFY_CLIENT_ID}:${env.SPOTIFY_CLIENT_SECRET}`,
         ).toString('base64')}`,
       },
       body: new URLSearchParams({
