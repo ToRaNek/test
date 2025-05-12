@@ -3,7 +3,23 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --background: 255, 255, 255;
+  --foreground: 24, 24, 27;
+  --accent: 29, 185, 84;
+}
+
+.dark {
+  --background: 24, 24, 27;
+  --foreground: 255, 255, 255;
+}
+
 body {
-  @apply bg-primary text-white;
+  color: rgb(var(--foreground));
+  background: rgb(var(--background));
   font-family: 'Inter', sans-serif;
+}
+
+.dark body {
+  @apply bg-primary text-white;
 }

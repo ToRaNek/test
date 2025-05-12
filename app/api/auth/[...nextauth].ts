@@ -1,9 +1,10 @@
+// app/api/auth/[...nextauth].ts
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import DiscordProvider from "next-auth/providers/discord";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "../../../utils/prisma";
-import { env } from "../../../utils/env"; // Sécuriser .env usage
+import { env } from "../../../utils/env";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -23,17 +24,27 @@ export const authOptions: NextAuthOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   callbacks: {
-    async session({ session, user, token }) {
-      // Inclure userId/pseudo dans la session
-      session.user.id = user?.id || token.sub;
-      session.user.pseudo = user?.pseudo || null;
+    async jwt({ token, user }) {
+      // Inclure l'ID utilisateur et le pseudo dans le token JWT
+      if (user) {
+        token.id = user.id;
+        token.pseudo = user.pseudo || null;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      // Inclure l'ID utilisateur et le pseudo dans la session
+      if (token) {
+        session.user.id = token.id as string;
+        session.user.pseudo = token.pseudo as string | null;
+      }
       return session;
     },
     async signIn({ user, account, profile }) {
       // Interdire signup direct, uniquement via Google/Discord
       if (
-        account.provider !== "google" &&
-        account.provider !== "discord"
+          account?.provider !== "google" &&
+          account?.provider !== "discord"
       ) {
         return false;
       }

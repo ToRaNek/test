@@ -1,4 +1,4 @@
-// /tailwind.config.js
+// tailwind.config.js
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: "class",
@@ -13,6 +13,8 @@ module.exports = {
         primary: "#18181b",
         secondary: "#27272a",
         accent: "#1db954", // Vert Spotify
+        background: "rgb(var(--background))",
+        foreground: "rgb(var(--foreground))",
       },
     },
   },

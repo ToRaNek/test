@@ -1,4 +1,7 @@
-// /utils/env.ts
+// utils/env.ts
+/**
+ * Charge et valide les variables d'environnement requises
+ */
 export const env = {
   NEXTAUTH_SECRET: required("NEXTAUTH_SECRET"),
   GOOGLE_CLIENT_ID: required("GOOGLE_CLIENT_ID"),
@@ -11,10 +14,16 @@ export const env = {
   SPOTIFY_REDIRECT_URI: required("SPOTIFY_REDIRECT_URI"),
 };
 
+/**
+ * Vérifie qu'une variable d'environnement requise est définie
+ * @param key Nom de la variable d'environnement
+ * @returns Valeur de la variable d'environnement
+ * @throws Error si la variable n'est pas définie
+ */
 function required(key: string): string {
   const value = process.env[key];
   if (!value) {
-    throw new Error(`Missing required env variable: ${key}`);
+    throw new Error(`Variable d'environnement requise manquante: ${key}`);
   }
   return value;
 }
