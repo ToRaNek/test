@@ -8,11 +8,21 @@ declare global {
 }
 
 // Création d'une seule instance de PrismaClient pour toute l'application
-export const prisma = global.prisma || new PrismaClient({
-    log: process.env.NODE_ENV === "development" ? ["query", "error", "info", "warn"] : ["error"],
-});
+const prismaClientSingleton = () => {
+    return new PrismaClient({
+        log: process.env.NODE_ENV === "development"
+            ? [
+                { emit: 'stdout', level: 'query' },
+                { emit: 'stdout', level: 'error' },
+                { emit: 'stdout', level: 'warn' }
+            ]
+            : [{ emit: 'stdout', level: 'error' }],
+    });
+};
 
 // Assigner l'instance à la variable globale en développement
+export const prisma = global.prisma ?? prismaClientSingleton();
+
 if (process.env.NODE_ENV !== "production") {
     global.prisma = prisma;
 }

@@ -1,171 +1,135 @@
 'use client';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
-
-interface SpotifySectionProps {
-  linked: boolean;
-  onLink: () => Promise<void>;
-  onUnlink: () => Promise<void>;
-}
-
-function SpotifySection({ linked, onLink, onUnlink }: SpotifySectionProps) {
-  return (
-    <div>
-      <h3 className="font-bold mb-2">Spotify</h3>
-      {!linked ? (
-        <button className="bg-accent text-white rounded px-3 py-1" onClick={onLink}>
-          Lier mon compte Spotify
-        </button>
-      ) : (
-        <button className="bg-red-500 text-white rounded px-3 py-1" onClick={onUnlink}>
-          Délier Spotify
-        </button>
-      )}
-    </div>
-  );
-}
+import { useSpotifyAuth } from '../../hooks/useSpotifyAuth';
+import { SpotifyLinkButton } from '../../components/SpotifyLinkButton';
+import { useProfile } from '../../hooks/useProfile';
 
 export default function Profile() {
-  const { data: session } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
+  const { profile, isLoading: profileLoading, error: profileError, update } = useProfile();
+  const { spotifyLinked, isLoading: spotifyLoading, error: spotifyError, link: linkSpotify, unlink: unlinkSpotify } = useSpotifyAuth();
+
   const [pseudo, setPseudo] = useState('');
   const [avatar, setAvatar] = useState('');
-  const [spotifyLinked, setSpotifyLinked] = useState(false);
   const [msg, setMsg] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
+  const [formSubmitting, setFormSubmitting] = useState(false);
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        setIsLoading(true);
-        // Récupérer le profil utilisateur
-        const profileRes = await fetch('/api/profile');
-        const userData = await profileRes.json();
-
-        if (userData.pseudo) setPseudo(userData.pseudo);
-        if (userData.image) setAvatar(userData.image);
-
-        // Vérifier le statut de liaison Spotify
-        const spotifyRes = await fetch('/api/spotify/status', { method: 'GET' });
-        const spotifyData = await spotifyRes.json();
-
-        setSpotifyLinked(spotifyData.linked || false);
-      } catch (error) {
-        console.error('Erreur:', error);
-        setMsg('Erreur lors du chargement du profil');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (session?.user) {
-      fetchProfile();
+    if (profile) {
+      setPseudo(profile.pseudo || '');
+      setAvatar(profile.image || '');
     }
-  }, [session]);
+  }, [profile]);
 
   const handleSave = async () => {
+    if (formSubmitting) return;
+
     try {
-      setIsLoading(true);
-      const r = await fetch('/api/profile', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pseudo, image: avatar }),
-      });
+      setFormSubmitting(true);
+      setMsg('');
 
-      const res = await r.json();
+      const result = await update({ pseudo, image: avatar });
 
-      if (res.error) {
-        setMsg(res.error);
+      if ('error' in result) {
+        setMsg(result.error);
       } else {
-        setMsg('Profil mis à jour !');
+        setMsg('Profil mis à jour avec succès !');
       }
     } catch (error) {
-      console.error('Erreur:', error);
+      console.error('Erreur lors de la mise à jour du profil:', error);
       setMsg('Erreur lors de la mise à jour du profil');
     } finally {
-      setIsLoading(false);
+      setFormSubmitting(false);
     }
   };
 
-  const handleLinkSpotify = async () => {
-    try {
-      setIsLoading(true);
-      const r = await fetch('/api/spotify/link', { method: 'POST' });
-      const data = await r.json();
+  if (sessionStatus === 'loading' || profileLoading) {
+    return <div className="animate-pulse">Chargement...</div>;
+  }
 
-      if (data.authUrl) {
-        window.location.href = data.authUrl;
-      } else {
-        setMsg("Erreur: URL d'authentification manquante");
-      }
-    } catch (error) {
-      console.error('Erreur:', error);
-      setMsg('Erreur lors de la liaison Spotify');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleUnlinkSpotify = async () => {
-    try {
-      setIsLoading(true);
-      await fetch('/api/spotify/unlink', { method: 'POST' });
-      setSpotifyLinked(false);
-      setMsg('Compte Spotify délié avec succès');
-    } catch (error) {
-      console.error('Erreur:', error);
-      setMsg('Erreur lors de la déliaison Spotify');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (!session) {
+  if (sessionStatus !== 'authenticated' || !session) {
     return <div>Veuillez vous connecter pour accéder à votre profil.</div>;
   }
 
   return (
-    <div>
-      <h2 className="text-xl font-bold">Profil</h2>
-      {isLoading ? (
-        <p>Chargement...</p>
-      ) : (
-        <div className="flex flex-col gap-4 mt-6">
-          <label>
-            <span>Pseudo :</span>
-            <input
-              className="ml-2 p-1"
-              value={pseudo}
-              onChange={(e) => setPseudo(e.target.value)}
-              placeholder="3-25 caractères, unique"
-              minLength={3}
-              maxLength={25}
-            />
-          </label>
-          <label>
-            <span>Avatar (URL, optionnel):</span>
-            <input
-              className="ml-2 p-1"
-              value={avatar}
-              onChange={(e) => setAvatar(e.target.value)}
-            />
-          </label>
-          <button
-            className="bg-accent rounded px-4 py-2 text-white mt-2"
-            onClick={handleSave}
-            disabled={isLoading}
-          >
-            Sauver le profil
-          </button>
+      <div className="space-y-8">
+        <div>
+          <h2 className="text-2xl font-bold">Profil</h2>
+          <p className="text-gray-400 mt-1">Gérez votre profil et vos préférences</p>
+        </div>
 
-          <SpotifySection
-            linked={spotifyLinked}
-            onLink={handleLinkSpotify}
-            onUnlink={handleUnlinkSpotify}
+        <div className="p-6 bg-secondary rounded-lg shadow-sm">
+          <h3 className="text-xl font-medium mb-4">Informations du profil</h3>
+
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="pseudo" className="block text-sm font-medium mb-1">
+                Pseudo
+              </label>
+              <input
+                  id="pseudo"
+                  type="text"
+                  value={pseudo}
+                  onChange={(e) => setPseudo(e.target.value)}
+                  placeholder="3-25 caractères, unique"
+                  minLength={3}
+                  maxLength={25}
+                  className="w-full p-2 bg-primary border border-gray-700 rounded focus:ring-accent focus:border-accent"
+              />
+              <p className="text-xs text-gray-400 mt-1">Choisisez un pseudo unique de 3 à 25 caractères</p>
+            </div>
+
+            <div>
+              <label htmlFor="avatar" className="block text-sm font-medium mb-1">
+                Avatar (URL)
+              </label>
+              <input
+                  id="avatar"
+                  type="text"
+                  value={avatar}
+                  onChange={(e) => setAvatar(e.target.value)}
+                  placeholder="https://exemple.com/avatar.jpg"
+                  className="w-full p-2 bg-primary border border-gray-700 rounded focus:ring-accent focus:border-accent"
+              />
+              <p className="text-xs text-gray-400 mt-1">Optionnel - URL vers une image</p>
+            </div>
+
+            <button
+                onClick={handleSave}
+                disabled={formSubmitting}
+                className={`bg-accent text-white px-4 py-2 rounded hover:bg-accent/90 transition-colors ${
+                    formSubmitting ? 'opacity-70 cursor-not-allowed' : ''
+                }`}
+            >
+              {formSubmitting ? 'Sauvegarde...' : 'Sauvegarder les modifications'}
+            </button>
+          </div>
+        </div>
+
+        <div className="p-6 bg-secondary rounded-lg shadow-sm">
+          <h3 className="text-xl font-medium mb-4">Liaison avec Spotify</h3>
+          <p className="mb-4">
+            {spotifyLinked
+                ? '✅ Votre compte Spotify est lié. Vous pouvez utiliser vos playlists et recommandations.'
+                : '❌ Vous devez lier votre compte Spotify pour jouer.'}
+          </p>
+
+          <SpotifyLinkButton
+              linked={spotifyLinked}
+              onLinkAction={linkSpotify}
+              onUnlinkAction={unlinkSpotify}
+              isLoading={spotifyLoading}
           />
 
-          {msg && <span className="text-accent">{msg}</span>}
+          {spotifyError && <p className="text-red-500 mt-2">{spotifyError}</p>}
         </div>
-      )}
-    </div>
+
+        {(msg || profileError) && (
+            <div className={`p-4 rounded ${msg.includes('succès') ? 'bg-green-800/20 text-green-200' : 'bg-red-800/20 text-red-200'}`}>
+              {msg || profileError}
+            </div>
+        )}
+      </div>
   );
 }

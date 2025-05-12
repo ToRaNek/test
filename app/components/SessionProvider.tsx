@@ -1,7 +1,8 @@
 // app/components/SessionProvider.tsx
 "use client";
 
-import { SessionProvider as NextAuthSessionProvider, Session } from "next-auth/react";
+import { SessionProvider as NextAuthSessionProvider } from "next-auth/react";
+import type { Session } from "next-auth";
 import { ReactNode } from "react";
 
 interface SessionProviderProps {

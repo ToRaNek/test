@@ -24,31 +24,69 @@ export async function getSpotifyAccessToken(userId: string): Promise<string | nu
   }
 
   // Sinon, on rafraîchit le token
-  const response = await fetch('https://accounts.spotify.com/api/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      grant_type: 'refresh_token',
-      refresh_token: account.refreshToken,
-      client_id: env.SPOTIFY_CLIENT_ID,
-      client_secret: env.SPOTIFY_CLIENT_SECRET,
-    }),
+  try {
+    const response = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Basic ${Buffer.from(
+            `${env.SPOTIFY_CLIENT_ID}:${env.SPOTIFY_CLIENT_SECRET}`
+        ).toString('base64')}`,
+      },
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: account.refreshToken,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erreur lors du rafraîchissement du token: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!data.access_token) return null;
+
+    // Mise à jour du token en base
+    await prisma.account.update({
+      where: { id: account.id },
+      data: {
+        accessToken: data.access_token,
+        expiresAt: Math.floor(Date.now() / 1000) + (data.expires_in ?? 3600),
+        refreshToken: data.refresh_token ?? account.refreshToken,
+        scope: data.scope ?? account.scope,
+      },
+    });
+
+    return data.access_token;
+  } catch (error) {
+    console.error('Erreur lors du rafraîchissement du token Spotify:', error);
+    return null;
+  }
+}
+
+/**
+ * Génère une URL d'autorisation pour lier un compte Spotify
+ */
+export function getSpotifyAuthorizationUrl(state: string): string {
+  const scope = [
+    'user-read-email',
+    'user-read-private',
+    'user-library-read',
+    'user-top-read',
+    'user-read-recently-played',
+    'playlist-read-private',
+    'playlist-read-collaborative',
+  ].join(' ');
+
+  const params = new URLSearchParams({
+    client_id: env.SPOTIFY_CLIENT_ID,
+    response_type: 'code',
+    redirect_uri: env.SPOTIFY_REDIRECT_URI,
+    scope,
+    state,
+    show_dialog: 'true',
   });
 
-  const data = await response.json();
-
-  if (!data.access_token) return null;
-
-  // Mise à jour du token en base
-  await prisma.account.update({
-    where: { id: account.id },
-    data: {
-      accessToken: data.access_token,
-      expiresAt: Math.floor(Date.now() / 1000) + (data.expires_in ?? 3600),
-      refreshToken: data.refresh_token ?? account.refreshToken,
-      scope: data.scope ?? account.scope,
-    },
-  });
-
-  return data.access_token;
+  return `https://accounts.spotify.com/authorize?${params.toString()}`;
 }
