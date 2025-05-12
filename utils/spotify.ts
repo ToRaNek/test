@@ -19,7 +19,7 @@ export async function getSpotifyAccessToken(userId: string): Promise<string | nu
 
   // Si le token est encore valide, on le retourne
   const now = Math.floor(Date.now() / 1000);
-  if (account.expiresAt && account.accessToken && account.expiresAt > now + 60) {
+  if (account.accessToken && account.expiresAt && account.expiresAt > now + 60) {
     return account.accessToken;
   }
 
@@ -37,6 +37,7 @@ export async function getSpotifyAccessToken(userId: string): Promise<string | nu
         grant_type: 'refresh_token',
         refresh_token: account.refreshToken,
       }),
+      cache: 'no-cache', // Important pour éviter les problèmes de mise en cache
     });
 
     if (!response.ok) {
@@ -52,8 +53,8 @@ export async function getSpotifyAccessToken(userId: string): Promise<string | nu
       where: { id: account.id },
       data: {
         accessToken: data.access_token,
-        expiresAt: Math.floor(Date.now() / 1000) + (data.expires_in ?? 3600),
-        refreshToken: data.refresh_token ?? account.refreshToken,
+        expiresAt: Math.floor(Date.now() / 1000) + (data.expires_in || 3600),
+        refreshToken: data.refresh_token ?? account.refreshToken, // Garder l'ancien refresh token si pas de nouveau
         scope: data.scope ?? account.scope,
       },
     });
@@ -67,6 +68,8 @@ export async function getSpotifyAccessToken(userId: string): Promise<string | nu
 
 /**
  * Génère une URL d'autorisation pour lier un compte Spotify
+ * @param state Chaîne aléatoire pour sécurité CSRF
+ * @returns URL d'autorisation Spotify
  */
 export function getSpotifyAuthorizationUrl(state: string): string {
   const scope = [
