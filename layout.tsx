@@ -5,7 +5,7 @@ import { ThemeProvider } from 'next-themes';
 import ThemeToggle from './app/components/ThemeToggle';
 import { SessionProvider } from './app/components/SessionProvider';
 import { getServerSession } from 'next-auth';
-import { authOptions } from './app/api/auth/[...nextauth]';
+import { authOptions } from './app/api/auth/[...nextauth]/route';
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const session = await getServerSession(authOptions);

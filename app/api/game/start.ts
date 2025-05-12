@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { prisma } from '../../../utils/prisma';
-import { authOptions } from '../auth/[...nextauth]';
+import { authOptions } from '../auth/[...nextauth]/route';
 
 // Stub out la génération de questions à partir des Spotify pools des joueurs
 async function generateQuestionsForRoom(_roomID: string) {

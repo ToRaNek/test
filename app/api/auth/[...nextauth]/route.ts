@@ -1,10 +1,10 @@
-// app/api/auth/[...nextauth].ts - Mise à jour
+// app/api/auth/routes.ts - Mise à jour
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import DiscordProvider from 'next-auth/providers/discord';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
-import { prisma } from '../../../utils/prisma';
-import { env } from '../../../utils/env';
+import { prisma } from '../../../../utils/prisma';
+import { env } from '../../../../utils/env';
 
 
 export const authOptions: NextAuthOptions = {

@@ -10,7 +10,7 @@
     /game/[gameId]
     /results/[gameId]
   /api
-    /auth/[...nextauth].ts
+    /auth/route.ts
     /profile.ts
     /spotify
       /link.ts

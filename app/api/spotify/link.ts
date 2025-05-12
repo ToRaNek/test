@@ -1,7 +1,7 @@
 // app/api/spotify/link.ts
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]';
+import { authOptions } from '../auth/[...nextauth]/route';
 import { env } from '../../../utils/env';
 import crypto from 'crypto';
 

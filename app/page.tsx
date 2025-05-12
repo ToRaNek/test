@@ -1,16 +1,16 @@
 // app/page.tsx
 import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
-import { authOptions } from './api/auth/[...nextauth]';
+import { authOptions } from './api/auth/[...nextauth]/route';
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
 
   // Si utilisateur non connecté, rediriger vers login
   if (!session?.user) {
-    redirect('/login');
+    redirect('/public/login');
   }
 
   // Utilisateur connecté, rediriger vers lobby
-  redirect('/lobby');
+  redirect('/public/lobby');
 }
